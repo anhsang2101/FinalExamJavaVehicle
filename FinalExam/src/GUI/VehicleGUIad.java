@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -58,6 +59,7 @@ public class VehicleGUIad {
 	private JTextField tfBrand;
 	private JTextField tfSearch;
 	JComboBox comboBox;
+	JDateChooser dateChooser;
 	JTable table;
 	ResultSet rs;
 	ResultSetMetaData rstmeta;
@@ -108,9 +110,9 @@ public class VehicleGUIad {
 		JLabel lbDate = new JLabel("Registration Date");
 		panelIdentityCard.add(lbDate);
 		
-		JDateChooser dateChooser = new JDateChooser();
+		dateChooser = new JDateChooser();
 		panelIdentityCard.add(dateChooser);
-		dateChooser.setDateFormatString("dd.mm.yyyy");
+		dateChooser.setDateFormatString("yyyy-MM-dd");
 		
 		JPanel panelVehicleTypeAndLicensePlate = new JPanel();
 		panelVehicleTypeAndLicensePlate.setBackground(SystemColor.activeCaption);
@@ -239,6 +241,7 @@ public class VehicleGUIad {
 				tfBrand.setText("");
 				tfChassisNumber.setText("");
 				tfEngineNumber.setText("");
+				dateChooser.setCalendar(null);
 			}
 			
 			public void actionPerformed(ActionEvent e) {
@@ -337,7 +340,7 @@ public class VehicleGUIad {
 			new Object[][] {
 			},
 			new String[] {
-				"Owner Name", "Identity Card", "Vehicle Type", "License Plate", "Brand", "Chassis Number", "Engine Number"
+				"Owner Name", "Identity Card", "Vehicle Type", "License Plate", "Brand", "Chassis Number", "Engine Number","Registration Date"
 			}
 		));
 		tableResult.setViewportView(table);
@@ -352,6 +355,7 @@ public class VehicleGUIad {
 				tfBrand.setText(v.getBrand());
 				tfChassisNumber.setText(v.getChassisNumber());
 				tfEngineNumber.setText(v.getEngineNumber());
+				dateChooser.setDate(v.getDate());
 			}
 			
 			
@@ -414,6 +418,7 @@ public class VehicleGUIad {
 		v.setBrand(tfBrand.getText());
 		v.setChassisNumber(tfChassisNumber.getText());
 		v.setEngineNumber(tfEngineNumber.getText());
+		v.setDate(utilToSqlDate(dateChooser.getDate()));
 		return v;
 	}
 	
@@ -435,7 +440,10 @@ public class VehicleGUIad {
 		}
 	}
 	
-	
+	public Date utilToSqlDate(java.util.Date time){
+	    java.sql.Date sqldate = new java.sql.Date(time.getTime());
+	    return sqldate;
+	}
 	
 	
 	public static void main(String[] args) {

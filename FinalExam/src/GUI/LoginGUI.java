@@ -17,6 +17,10 @@ import java.sql.ResultSet;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import java.awt.Font;
+import java.awt.Color;
 
 public class LoginGUI {
 	ConnectDB c = new ConnectDB();
@@ -28,25 +32,44 @@ public class LoginGUI {
 	public LoginGUI(){
 		frame.getContentPane().setLayout(new GridLayout(4,1));
 		
+		JPanel panelTitle = new JPanel();
+		frame.getContentPane().add(panelTitle);
+		
+		JLabel lbTitle = new JLabel("Login");
+		lbTitle.setForeground(Color.RED);
+		lbTitle.setFont(new Font("Tahoma", Font.BOLD, 20));
+		panelTitle.add(lbTitle);
+		
+		JPanel panelUserName = new JPanel();
+		frame.getContentPane().add(panelUserName);
+		
+		JPanel panelPassword = new JPanel();
+		frame.getContentPane().add(panelPassword);
+		
+		JPanel panelRole = new JPanel();
+		frame.getContentPane().add(panelRole);
+		
+		
 		JLabel lbUsername = new JLabel("User Name");
-		frame.getContentPane().add(lbUsername);
+		panelUserName.add(lbUsername);
 		
 		tfUsername = new JTextField();
-		frame.getContentPane().add(tfUsername);
-		tfUsername.setColumns(10);
+		panelUserName.add(tfUsername);
+		tfUsername.setColumns(15);
 		
 		JLabel lbPassword = new JLabel("Password");
-		frame.getContentPane().add(lbPassword);
+		panelPassword.add(lbPassword);
 		
 		passwordField = new JPasswordField();
-		frame.getContentPane().add(passwordField);
+		passwordField.setColumns(15);
+		panelPassword.add(passwordField);
 		
 		JLabel lbRole = new JLabel("Role");
-		frame.getContentPane().add(lbRole);
+		panelRole.add(lbRole);
 		
 		JComboBox Role = new JComboBox();
 		Role.setModel(new DefaultComboBoxModel(new String[] {"Admin", "User"}));
-		frame.getContentPane().add(Role);
+		panelRole.add(Role);
 		
 		JButton btnSignIn = new JButton("Sign in");
 		btnSignIn.addActionListener(new ActionListener() {
@@ -70,15 +93,36 @@ public class LoginGUI {
 				}
 			}
 		});
-		frame.getContentPane().add(btnSignIn);
+		
+		JPanel panel = new JPanel();
+		panelRole.add(panel);
+		
+		JPanel panel_1 = new JPanel();
+		panelRole.add(panel_1);
+		
+		JPanel panel_2 = new JPanel();
+		panelRole.add(panel_2);
+		panelRole.add(btnSignIn);
 		
 		
+		// Add Icon
+		
+		ImageIcon loginIcon = new ImageIcon("LoginIcon.png");
+		lbTitle.setIcon(loginIcon);
+		ImageIcon userNameIcon = new ImageIcon("UserNameIcon.png");
+		lbUsername.setIcon(userNameIcon);
+		ImageIcon passwordIcon = new ImageIcon("PasswordIcon.png");
+		lbPassword.setIcon(passwordIcon);
+		ImageIcon roleIcon = new ImageIcon("RoleIcon.png");
+		lbRole.setIcon(roleIcon);
+		ImageIcon signInIcon = new ImageIcon("SignInIcon.jpg");
+		btnSignIn.setIcon(signInIcon);
 		
 		
 		
 		frame.pack();
-		frame.setLocation(400,200);
-		frame.setSize(500,150);
+		frame.setLocation(500,150);
+		frame.setSize(400,300);
 		frame.setVisible(true);
 	}
 	

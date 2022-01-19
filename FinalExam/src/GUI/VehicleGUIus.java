@@ -32,44 +32,14 @@ public class VehicleGUIus {
 	JFrame frame = new JFrame("Vehical management for User");
 	ResultSet rs;
 	ResultSetMetaData rstmeta;
-	Vector vData=null, vTitle=null; 
+
 	JTable table;
 	public VehicleGUIus() {
 		frame.getContentPane().setLayout(new GridLayout(2,1));
 		
-		ConnectDB s = new ConnectDB();
-	    
-	    try {
-			rstmeta = rs.getMetaData();
-			int num_column = rstmeta.getColumnCount();
-			
-			 vTitle = new Vector(num_column);
-			
-			 for (int i=1; i<=num_column;i++){
-			 vTitle.add(rstmeta.getColumnLabel(i));
-			 }
-			 
-			 vData = new Vector(10,10);
-			
-			 while (rs.next()){
-			 Vector row = new Vector(num_column);
-			 for (int i=1; i<=num_column;i++)				
-				 row.add(rs.getString(i));				
-				 vData.add(row);
-			 }			 
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    /*tạo bảng để chứa thông tin truy vấn từ csdl*/
 	    
 	    JPanel panel = new JPanel();
 	    frame.getContentPane().add(panel);
-	    
-	    
-	    JButton btnNewButton_3 = new JButton("New button");
-	    panel.add(btnNewButton_3);
 	    
 	    JButton btnSignOut = new JButton("Sign Out");
 	    btnSignOut.addActionListener(new ActionListener() {
@@ -79,10 +49,11 @@ public class VehicleGUIus {
 				LoginGUI log = new LoginGUI();
 	    	}
 	    });
+	    panel.setLayout(new BorderLayout(0, 0));
 	    panel.add(btnSignOut);
 	    
 	    JPanel panelTable = new JPanel();
-	    table = new JTable(vData,vTitle);
+
 	    JScrollPane tableResult = new JScrollPane(table);
 	    panelTable.setLayout( new BorderLayout());
 		Border border = BorderFactory.createLineBorder(Color.BLACK);

@@ -31,7 +31,18 @@ public class Vehicle {
 
 	}
 
-
+	public Vehicle(String ownerName, int identityCard, String type, String licensePlate, String brand,
+			String chassisNumber, String engineNumber, Date date) {
+		super();
+		this.ownerName = ownerName;
+		this.identityCard = identityCard;
+		this.type = type;
+		this.licensePlate = licensePlate;
+		this.brand = brand;
+		this.chassisNumber = chassisNumber;
+		this.engineNumber = engineNumber;
+		this.date = date;
+	}
 
 	public String getType() {
 		return type;

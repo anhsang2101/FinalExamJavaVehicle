@@ -38,7 +38,7 @@ public class ConnectDB {
 		Connection conn = null;
 		PreparedStatement sttm = null;
 		try {
-			String sql = "Insert into Vehicle ([Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number]) values(?,?,?,?,?,?,?)";
+			String sql = "Insert into Vehicle ([Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date]) values(?,?,?,?,?,?,?,?)";
 			conn = getDBConnect();
 			sttm = conn.prepareStatement(sql);
 			sttm.setString(1, v.getOwnerName());
@@ -48,12 +48,14 @@ public class ConnectDB {
 			sttm.setString(5, v.getBrand());
 			sttm.setString(6, v.getChassisNumber());
 			sttm.setString(7, v.getEngineNumber());
+			sttm.setDate(8, v.getDate());
 			if(sttm.executeUpdate() > 0) {
 				System.out.println("Insert thanh cong");
 				return 1;
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
+			System.out.println(e.toString());
 		} finally {
 			try {
 				sttm.close();
@@ -70,7 +72,7 @@ public class ConnectDB {
 		Connection conn = null;
 		PreparedStatement sttm = null;
 		try {
-			String sql = "Update Vehicle set [Owner Name] = ?, [Identity Card] = ?, [Vehicle Type] = ?, [Brand] = ?, [Chassis Number] = ?, [Engine Number] = ? where  [License Plate] = ?";
+			String sql = "Update Vehicle set [Owner Name] = ?, [Identity Card] = ?, [Vehicle Type] = ?, [Brand] = ?, [Chassis Number] = ?, [Engine Number] = ?, [Registration Date] = ? where  [License Plate] = ?";
 			conn = getDBConnect();
 			sttm = conn.prepareStatement(sql);
 			sttm.setString(1, v.getOwnerName());
@@ -79,13 +81,15 @@ public class ConnectDB {
 			sttm.setString(4, v.getBrand());
 			sttm.setString(5, v.getChassisNumber());
 			sttm.setString(6, v.getEngineNumber());
-			sttm.setString(7, v.getLicensePlate());
+			sttm.setDate(7, v.getDate());
+			sttm.setString(8, v.getLicensePlate());
 			if(sttm.executeUpdate() > 0) {
 				System.out.println("Update thanh cong");
 				return 1;
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
+			System.out.println(e.toString());
 		} finally {
 			try {
 				sttm.close();
@@ -162,7 +166,7 @@ public class ConnectDB {
 		Statement sttm = null;
 		ResultSet rs = null;
 		try {
-			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number] From Vehicle";
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle";
 			conn = getDBConnect();
 			sttm = conn.createStatement();
 			rs = sttm.executeQuery(sql);
@@ -175,6 +179,7 @@ public class ConnectDB {
 				v.setBrand(rs.getString(5));
 				v.setChassisNumber(rs.getString(6));
 				v.setEngineNumber(rs.getString(7));
+				v.setDate(rs.getDate(8));
 				list.add(v);
 				
 			}
@@ -197,7 +202,7 @@ public class ConnectDB {
 		Connection conn = null;
 		ResultSet rs = null;
 		PreparedStatement sttm = null;
-		String sql = "Select [Owner Name],[Identity Card],[Vehicle Type],[License Plate],[Brand],[Chassis Number],[Engine Number] from Vehicle where [License Plate] = ?";
+		String sql = "Select [Owner Name],[Identity Card],[Vehicle Type],[License Plate],[Brand],[Chassis Number],[Engine Number], [Registration Date] from Vehicle where [License Plate] = ?";
 		Vehicle v = new Vehicle();
 		try {
 			conn = getDBConnect();
@@ -212,6 +217,7 @@ public class ConnectDB {
 				v.setBrand(rs.getString(5));
 				v.setChassisNumber(rs.getString(6));
 				v.setEngineNumber(rs.getString(7));
+				v.setDate(rs.getDate(8));
 				return v;
 			}
 		} catch (SQLException e) {
@@ -236,7 +242,7 @@ public class ConnectDB {
 		PreparedStatement sttm = null;
 
 		try {
-			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number] From Vehicle where [Owner Name] like '%"+name+"%'";
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle where [Owner Name] like '%"+name+"%'";
 			conn = getDBConnect();
 			sttm = conn.prepareStatement(sql);
 			rs = sttm.executeQuery();
@@ -250,6 +256,7 @@ public class ConnectDB {
 				v.setBrand(rs.getString(5));
 				v.setChassisNumber(rs.getString(6));
 				v.setEngineNumber(rs.getString(7));
+				v.setDate(rs.getDate(8));
 				list.add(v);
 				
 			}
