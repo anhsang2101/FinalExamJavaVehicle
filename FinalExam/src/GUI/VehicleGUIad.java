@@ -58,7 +58,8 @@ public class VehicleGUIad {
 	private JTextField tfEngineNumber;
 	private JTextField tfBrand;
 	private JTextField tfSearch;
-	JComboBox comboBox;
+	JComboBox comboBoxType;
+	JComboBox comboBoxSearch;
 	JDateChooser dateChooser;
 	JTable table;
 	ResultSet rs;
@@ -121,10 +122,10 @@ public class VehicleGUIad {
 		JLabel lbVehicleType = new JLabel("Vehicle Type");
 		panelVehicleTypeAndLicensePlate.add(lbVehicleType);
 		
-		comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Car", "Motobike"}));
+		comboBoxType = new JComboBox();
+		comboBoxType.setModel(new DefaultComboBoxModel(new String[] {"Car", "Motobike"}));
 		
-		panelVehicleTypeAndLicensePlate.add(comboBox);
+		panelVehicleTypeAndLicensePlate.add(comboBoxType);
 		
 		JPanel space = new JPanel();
 		panelVehicleTypeAndLicensePlate.add(space);
@@ -179,16 +180,20 @@ public class VehicleGUIad {
 		JButton btnInsert = new JButton("Insert");
 		btnInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				if(validateForm()) {
 					Vehicle v = putToModel();
-					if(c.Insert(v)>0) {
+					if(c.Checklp(v.getLicensePlate())>0)
+						JOptionPane.showMessageDialog(null, "License Plate is existed");
+
+					else if(c.Insert(v)>0) {
 						JOptionPane.showMessageDialog(null, "Insert successfully");
 						fillDataTable();
 					}
-					
-				} 
+				}
+				
 				else {
-					JOptionPane.showMessageDialog(null, "Please complete required field");
+					JOptionPane.showMessageDialog(null, "Please complete required field");	
 				}
 			}
 		});
@@ -220,6 +225,7 @@ public class VehicleGUIad {
 					if(c.Delete(v.getLicensePlate())>0) {
 						JOptionPane.showMessageDialog(null, "Delete successfully");
 						fillDataTable();
+						newTextField();
 					}
 					
 				}
@@ -232,17 +238,6 @@ public class VehicleGUIad {
 		
 		JButton btnRefresh = new JButton("Refresh");
 		btnRefresh.addActionListener(new ActionListener() {
-			
-			public void newTextField() {
-				tfOwnerName.setText("");
-				tfIdentityCard.setText(String.valueOf(""));
-				comboBox.setSelectedIndex(0);
-				tfLicensePlate.setText("");
-				tfBrand.setText("");
-				tfChassisNumber.setText("");
-				tfEngineNumber.setText("");
-				dateChooser.setCalendar(null);
-			}
 			
 			public void actionPerformed(ActionEvent e) {
 				newTextField();
@@ -258,41 +253,11 @@ public class VehicleGUIad {
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DefaultTableModel Model = (DefaultTableModel) table.getModel();
-				
-				Connection conn = null;
-				ResultSet rs = null;
-				PreparedStatement sttm = null;
-				
-				try {
-					String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number] From Vehicle where [Owner Name] like '%"+tfSearch.getText()+"%'";
-					conn = c.getDBConnect();
-					sttm = conn.prepareStatement(sql);
-					rs = sttm.executeQuery();
-							
-					if(rs.next()==false) {
-						JOptionPane.showMessageDialog(null, "Not found");
-					}
-					else {
-						Model.setRowCount(0);
-						for (Vehicle v : c.getVehicleByOwnerName(tfSearch.getText())){
-							Object dataRow[] = new Object[7];
-							dataRow[0] = v.getOwnerName();
-							dataRow[1] = v.getIdentityCard();
-							dataRow[2] = v.getType();
-							dataRow[3] = v.getLicensePlate();
-							dataRow[4] = v.getBrand();
-							dataRow[5] = v.getChassisNumber();
-							dataRow[6] = v.getEngineNumber();
-							Model.addRow(dataRow);
-						}
-					}
-				} catch (HeadlessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if(comboBoxSearch.getSelectedIndex()==0) {
+					searchByOwnerName();
+				}
+				else if(comboBoxSearch.getSelectedIndex()==1){
+					searchByLicensePlate();
 				}
 				
 			}
@@ -305,6 +270,10 @@ public class VehicleGUIad {
 		tfSearch = new JTextField();
 		panelFunction.add(tfSearch);
 		tfSearch.setColumns(20);
+		
+		comboBoxSearch = new JComboBox();
+		comboBoxSearch.setModel(new DefaultComboBoxModel(new String[] {"Owner Name", "License Plate"}));
+		panelFunction.add(comboBoxSearch);
 		
 		panelFunction.add(btnSearch);
 		
@@ -350,7 +319,7 @@ public class VehicleGUIad {
 			public void setTextField(Vehicle v) {
 				tfOwnerName.setText(v.getOwnerName());
 				tfIdentityCard.setText(String.valueOf(v.getIdentityCard()));
-				comboBox.setSelectedItem(v.getType());
+				comboBoxType.setSelectedItem(v.getType());
 				tfLicensePlate.setText(v.getLicensePlate());
 				tfBrand.setText(v.getBrand());
 				tfChassisNumber.setText(v.getChassisNumber());
@@ -413,13 +382,24 @@ public class VehicleGUIad {
 		Vehicle v = new Vehicle();
 		v.setOwnerName(tfOwnerName.getText());
 		v.setIdentityCard(Integer.parseInt(tfIdentityCard.getText()));
-		v.setType(comboBox.getSelectedItem().toString());
+		v.setType(comboBoxType.getSelectedItem().toString());
 		v.setLicensePlate(tfLicensePlate.getText());
 		v.setBrand(tfBrand.getText());
 		v.setChassisNumber(tfChassisNumber.getText());
 		v.setEngineNumber(tfEngineNumber.getText());
 		v.setDate(utilToSqlDate(dateChooser.getDate()));
 		return v;
+	}
+	
+	public void newTextField() {
+		tfOwnerName.setText("");
+		tfIdentityCard.setText(String.valueOf(""));
+		comboBoxType.setSelectedIndex(0);
+		tfLicensePlate.setText("");
+		tfBrand.setText("");
+		tfChassisNumber.setText("");
+		tfEngineNumber.setText("");
+		dateChooser.setCalendar(null);
 	}
 	
 	public void fillDataTable() {
@@ -437,6 +417,86 @@ public class VehicleGUIad {
 			dataRow[6] = v.getEngineNumber();
 			dataRow[7] = v.getDate();
 			model.addRow(dataRow);
+		}
+	}
+	
+	public void searchByOwnerName() {
+		DefaultTableModel Model = (DefaultTableModel) table.getModel();
+		
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+		
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle where [Owner Name] like '%"+tfSearch.getText()+"%'";
+			conn = c.getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+					
+			if(rs.next()==false) {
+				JOptionPane.showMessageDialog(null, "Not found");
+			}
+			else {
+				Model.setRowCount(0);
+				for (Vehicle v : c.getVehicleByOwnerName(tfSearch.getText())){
+					Object dataRow[] = new Object[8];
+					dataRow[0] = v.getOwnerName();
+					dataRow[1] = v.getIdentityCard();
+					dataRow[2] = v.getType();
+					dataRow[3] = v.getLicensePlate();
+					dataRow[4] = v.getBrand();
+					dataRow[5] = v.getChassisNumber();
+					dataRow[6] = v.getEngineNumber();
+					dataRow[7] = v.getDate();
+					Model.addRow(dataRow);
+				}
+			}
+		} catch (HeadlessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	public void searchByLicensePlate() {
+		DefaultTableModel Model = (DefaultTableModel) table.getModel();
+		
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+		
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle where [License Plate] like '%"+tfSearch.getText()+"%'";
+			conn = c.getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+					
+			if(rs.next()==false) {
+				JOptionPane.showMessageDialog(null, "Not found");
+			}
+			else {
+				Model.setRowCount(0);
+				for (Vehicle v : c.getVehiclesByLp(tfSearch.getText())){
+					Object dataRow[] = new Object[8];
+					dataRow[0] = v.getOwnerName();
+					dataRow[1] = v.getIdentityCard();
+					dataRow[2] = v.getType();
+					dataRow[3] = v.getLicensePlate();
+					dataRow[4] = v.getBrand();
+					dataRow[5] = v.getChassisNumber();
+					dataRow[6] = v.getEngineNumber();
+					dataRow[7] = v.getDate();
+					Model.addRow(dataRow);
+				}
+			}
+		} catch (HeadlessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 	

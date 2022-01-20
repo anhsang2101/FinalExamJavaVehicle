@@ -34,6 +34,36 @@ public class ConnectDB {
 		return null;
 	}
 	
+	public int Checklp(String lp) {
+		
+		Connection conn = null;
+		PreparedStatement sttm = null;
+		ResultSet rs = null;
+		try {
+			String sql = "Select * From Vehicle Where [License Plate] = ? ";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setString(1, lp);
+			rs = sttm.executeQuery();
+			if(rs.next())
+				return 1;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+				rs.close();
+				
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return -1;
+
+	}
+	
 	public int Insert(Vehicle v) {
 		Connection conn = null;
 		PreparedStatement sttm = null;
@@ -275,6 +305,45 @@ public class ConnectDB {
 		return list;
 	}
 	
+	public List<Vehicle> getVehiclesByLp(String lp){
+		List<Vehicle> list = new ArrayList<>();
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle where [License Plate] like '%"+lp+"%'";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+			
+			while(rs.next()) {
+				Vehicle v = new Vehicle();
+				v.setOwnerName(rs.getString(1));
+				v.setIdentityCard(rs.getInt(2));
+				v.setType(rs.getString(3));
+				v.setLicensePlate(rs.getString(4));
+				v.setBrand(rs.getString(5));
+				v.setChassisNumber(rs.getString(6));
+				v.setEngineNumber(rs.getString(7));
+				v.setDate(rs.getDate(8));
+				list.add(v);
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				rs.close();
+				//SQL_D.getCon().close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+		return list;
+	}
 	
 	public static void main(String[] args) {
 		//ConnectDB q = new ConnectDB();
