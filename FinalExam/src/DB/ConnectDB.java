@@ -228,6 +228,82 @@ public class ConnectDB {
 		return list;
 	}
 	
+	public List<Vehicle> getAllMotobike(){
+		List<Vehicle> list = new ArrayList<>();
+		Connection conn = null;
+		Statement sttm = null;
+		ResultSet rs = null;
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle Where [Vehicle Type] = 'Motobike'";
+			conn = getDBConnect();
+			sttm = conn.createStatement();
+			rs = sttm.executeQuery(sql);
+			while(rs.next()) {
+				Vehicle v = new Vehicle();
+				v.setOwnerName(rs.getString(1));
+				v.setIdentityCard(rs.getInt(2));
+				v.setType(rs.getString(3));
+				v.setLicensePlate(rs.getString(4));
+				v.setBrand(rs.getString(5));
+				v.setChassisNumber(rs.getString(6));
+				v.setEngineNumber(rs.getString(7));
+				v.setDate(rs.getDate(8));
+				list.add(v);
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+				rs.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return list;
+	}
+	
+	public List<Vehicle> getAllCar(){
+		List<Vehicle> list = new ArrayList<>();
+		Connection conn = null;
+		Statement sttm = null;
+		ResultSet rs = null;
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle Where [Vehicle Type] = 'Car'";
+			conn = getDBConnect();
+			sttm = conn.createStatement();
+			rs = sttm.executeQuery(sql);
+			while(rs.next()) {
+				Vehicle v = new Vehicle();
+				v.setOwnerName(rs.getString(1));
+				v.setIdentityCard(rs.getInt(2));
+				v.setType(rs.getString(3));
+				v.setLicensePlate(rs.getString(4));
+				v.setBrand(rs.getString(5));
+				v.setChassisNumber(rs.getString(6));
+				v.setEngineNumber(rs.getString(7));
+				v.setDate(rs.getDate(8));
+				list.add(v);
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+				rs.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return list;
+	}
+	
 	public Vehicle getVehicleByLp(String lp) {
 		Connection conn = null;
 		ResultSet rs = null;
@@ -343,6 +419,93 @@ public class ConnectDB {
 			
 		}
 		return list;
+	}
+	
+	public int countCar() {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+		int count=0;
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle where [Vehicle Type] = 'Car'";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+			
+			while(rs.next()) {
+				count++;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				rs.close();
+				//SQL_D.getCon().close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+		return count;
+	}
+	
+	public int countMoto() {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+		int count=0;
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle where [Vehicle Type] = 'Motobike'";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+			
+			while(rs.next()) {
+				count++;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				rs.close();
+				//SQL_D.getCon().close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+		return count;
+	}
+	
+	public int countAll() {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+		int count=0;
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+			
+			while(rs.next()) {
+				count++;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				rs.close();
+				//SQL_D.getCon().close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+		return count;
 	}
 	
 	public static void main(String[] args) {

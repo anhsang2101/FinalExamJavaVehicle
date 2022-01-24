@@ -4,49 +4,40 @@ import javax.swing.JFrame;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 import Model.Vehicle;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-
-import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
 import DB.ConnectDB;
-
-import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.SystemColor;
 import com.toedter.calendar.JDateChooser;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.JRadioButton;
 
 public class VehicleGUIad {
 	ConnectDB c = new ConnectDB();
@@ -61,22 +52,36 @@ public class VehicleGUIad {
 	JComboBox comboBoxType;
 	JComboBox comboBoxSearch;
 	JDateChooser dateChooser;
-	JTable table;
+	JTable table, table2;
+	JLabel lbNumCar;
+	JLabel lbNumMoto;
+	JLabel lbNumAll;
 	ResultSet rs;
 	ResultSetMetaData rstmeta;
 
 	
 	public VehicleGUIad() {
-		frame.getContentPane().setLayout(new GridLayout(2,1));
-		JPanel mainPanel = new JPanel();
-		mainPanel.setBackground(SystemColor.activeCaption);
-		mainPanel.setLayout(new GridLayout(8,1));
-		frame.getContentPane().add(mainPanel);
+		frame.getContentPane().setLayout(new GridLayout(1,1));
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		frame.getContentPane().add(tabbedPane);
+		
+		//tab 1
+		
+		JPanel mainMenu = new JPanel();
+		mainMenu.setLayout(new GridLayout(2,1));
+		tabbedPane.add(mainMenu);
+
+		
+		JPanel menuPanel = new JPanel();
+		menuPanel.setBackground(SystemColor.activeCaption);
+		menuPanel.setLayout(new GridLayout(8,1));
+		mainMenu.add(menuPanel);
 		
 		
 		JPanel panelTitle = new JPanel();
 		panelTitle.setBackground(SystemColor.activeCaption);
-		mainPanel.add(panelTitle);
+		menuPanel.add(panelTitle);
 		
 		JLabel lbTitle = new JLabel("Vehicle Management");
 		panelTitle.add(lbTitle);
@@ -85,7 +90,7 @@ public class VehicleGUIad {
 		
 		JPanel panelName = new JPanel();
 		panelName.setBackground(SystemColor.activeCaption);
-		mainPanel.add(panelName);
+		menuPanel.add(panelName);
 		
 		JLabel lbOwnerName = new JLabel("Owner Name");
 		panelName.add(lbOwnerName);
@@ -96,7 +101,7 @@ public class VehicleGUIad {
 		
 		JPanel panelIdentityCard = new JPanel();
 		panelIdentityCard.setBackground(SystemColor.activeCaption);
-		mainPanel.add(panelIdentityCard);
+		menuPanel.add(panelIdentityCard);
 		
 		JLabel lbIdentityCard = new JLabel("Identity Card");
 		panelIdentityCard.add(lbIdentityCard);
@@ -117,7 +122,7 @@ public class VehicleGUIad {
 		
 		JPanel panelVehicleTypeAndLicensePlate = new JPanel();
 		panelVehicleTypeAndLicensePlate.setBackground(SystemColor.activeCaption);
-		mainPanel.add(panelVehicleTypeAndLicensePlate);
+		menuPanel.add(panelVehicleTypeAndLicensePlate);
 		
 		JLabel lbVehicleType = new JLabel("Vehicle Type");
 		panelVehicleTypeAndLicensePlate.add(lbVehicleType);
@@ -150,7 +155,7 @@ public class VehicleGUIad {
 		
 		JPanel panelChassisNumber = new JPanel();
 		panelChassisNumber.setBackground(SystemColor.activeCaption);
-		mainPanel.add(panelChassisNumber);
+		menuPanel.add(panelChassisNumber);
 		
 		JLabel lbChassisNumber = new JLabel("Chassis Number");
 		panelChassisNumber.add(lbChassisNumber);
@@ -169,13 +174,13 @@ public class VehicleGUIad {
 		panelChassisNumber.add(tfEngineNumber);
 		tfEngineNumber.setColumns(19);
 		
-		JPanel panelDate = new JPanel();
-		panelDate.setBackground(SystemColor.activeCaption);
-		mainPanel.add(panelDate);
+		JPanel panelSpace = new JPanel();
+		panelSpace.setBackground(SystemColor.activeCaption);
+		menuPanel.add(panelSpace);
 		
 		JPanel panelButton = new JPanel();
 		panelButton.setBackground(SystemColor.activeCaption);
-		mainPanel.add(panelButton);
+		menuPanel.add(panelButton);
 		
 		JButton btnInsert = new JButton("Insert");
 		btnInsert.addActionListener(new ActionListener() {
@@ -189,6 +194,7 @@ public class VehicleGUIad {
 					else if(c.Insert(v)>0) {
 						JOptionPane.showMessageDialog(null, "Insert successfully");
 						fillDataTable();
+						refreshStatistical();
 					}
 				}
 				
@@ -226,6 +232,7 @@ public class VehicleGUIad {
 						JOptionPane.showMessageDialog(null, "Delete successfully");
 						fillDataTable();
 						newTextField();
+						refreshStatistical();
 					}
 					
 				}
@@ -248,7 +255,7 @@ public class VehicleGUIad {
 		
 		JPanel panelFunction = new JPanel();
 		panelFunction.setBackground(SystemColor.activeCaption);
-		mainPanel.add(panelFunction);
+		menuPanel.add(panelFunction);
 		
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
@@ -275,6 +282,8 @@ public class VehicleGUIad {
 		comboBoxSearch.setModel(new DefaultComboBoxModel(new String[] {"Owner Name", "License Plate"}));
 		panelFunction.add(comboBoxSearch);
 		
+		
+		
 		panelFunction.add(btnSearch);
 		
 		JButton btnSignOut = new JButton("Sign Out");
@@ -287,13 +296,13 @@ public class VehicleGUIad {
 			}
 		});
 		
-		JPanel panelTable = new JPanel();
-		panelTable.setBackground(SystemColor.activeCaption);
-		frame.getContentPane().add(panelTable);
-		panelTable.setLayout( new BorderLayout());
+		JPanel tablePanel = new JPanel();
+		tablePanel.setBackground(SystemColor.activeCaption);
+		mainMenu.add(tablePanel);
+		tablePanel.setLayout( new BorderLayout());
 		Border border = BorderFactory.createLineBorder(Color.BLACK);
 		TitledBorder titleBorder = BorderFactory.createTitledBorder(border, " View Table ");
-		panelTable.setBorder(titleBorder);
+		tablePanel.setBorder(titleBorder);
 		
 		
 		
@@ -302,7 +311,7 @@ public class VehicleGUIad {
 		
 		JScrollPane tableResult = new JScrollPane();
 
-		panelTable.add(tableResult);
+		tablePanel.add(tableResult);
 		
 		table = new JTable();
 		table.setModel(new DefaultTableModel(
@@ -339,9 +348,139 @@ public class VehicleGUIad {
 		});
 		
 		fillDataTable();
+		// tab2
+		
+		JPanel statisticalMenu = new JPanel();
+		statisticalMenu.setLayout(new GridLayout(2,1));
+		tabbedPane.add(statisticalMenu);
+		
+		JPanel menuPanel2 = new JPanel();
+		menuPanel2.setLayout(new GridLayout(2,1));
+		statisticalMenu.add(menuPanel2);
+		
+		JPanel panelStatistical = new JPanel();
+		panelStatistical.setLayout(new GridLayout(1,3));
+		
+		menuPanel2.add(panelStatistical);
+		
+		JPanel panelCar = new JPanel();
+		panelCar.setLayout(new GridLayout(2,1));
+		panelStatistical.add(panelCar);
+		
+		JLabel lbNumCarTitle = new JLabel("Number of cars");
+		lbNumCarTitle.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		lbNumCarTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		panelCar.add(lbNumCarTitle);
+		
+		lbNumCar = new JLabel("");
+		lbNumCar.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		lbNumCar.setHorizontalAlignment(SwingConstants.CENTER);
+		lbNumCar.setText(String.valueOf(c.countCar()));
+		panelCar.add(lbNumCar);
+		
+		JPanel panelMoto = new JPanel();
+		panelMoto.setBackground(SystemColor.activeCaption);
+		panelMoto.setLayout(new GridLayout(2,1));
+		panelStatistical.add(panelMoto);
+		
+		JLabel lbNumMotoTitle = new JLabel("Number of motobikes");
+		lbNumMotoTitle.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		lbNumMotoTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		panelMoto.add(lbNumMotoTitle);
+		
+		lbNumMoto = new JLabel("");
+		lbNumMoto.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		lbNumMoto.setHorizontalAlignment(SwingConstants.CENTER);
+		lbNumMoto.setText(String.valueOf(c.countMoto()));
+		panelMoto.add(lbNumMoto);
+		
+		JPanel panelAll = new JPanel();
+		panelAll.setLayout(new GridLayout(2,1));
+		panelStatistical.add(panelAll);
+		
+		JLabel lbNumAllTitle = new JLabel("Number of all vehicles");
+		lbNumAllTitle.setForeground(Color.RED);
+		lbNumAllTitle.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		lbNumAllTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		panelAll.add(lbNumAllTitle);
+		
+		lbNumAll = new JLabel("");
+		lbNumAll.setForeground(Color.RED);
+		lbNumAll.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		lbNumAll.setHorizontalAlignment(SwingConstants.CENTER);
+		lbNumAll.setText(String.valueOf(c.countAll()));
+		panelAll.add(lbNumAll);
+		
+		JPanel panelFunction2 = new JPanel();
+		panelFunction2.setLayout(new GridLayout(1,1));
+		menuPanel2.add(panelFunction2);
+		
+		JPanel panelRadioCar = new JPanel();
+		panelRadioCar.setLayout(new GridLayout(1,1));
+		panelFunction2.add(panelRadioCar);
+		
+		JRadioButton rdbtnCar = new JRadioButton("Show All Cars");
+		rdbtnCar.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		rdbtnCar.setBackground(SystemColor.activeCaption);
+		rdbtnCar.setHorizontalAlignment(SwingConstants.CENTER);
+		rdbtnCar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fillDataCar();
+			}
+		});
+		panelRadioCar.add(rdbtnCar);
+		
+		JPanel panelRadioMoto = new JPanel();
+		panelRadioMoto.setLayout(new GridLayout(1,1));
+		panelFunction2.add(panelRadioMoto);
+		
+		JRadioButton rdbtnMoto = new JRadioButton("Show All Motobikes");
+		rdbtnMoto.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		rdbtnMoto.setBackground(SystemColor.activeCaption);
+		rdbtnMoto.setHorizontalAlignment(SwingConstants.CENTER);
+		rdbtnMoto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fillDataMotobike();
+			}
+		});
+		panelRadioMoto.add(rdbtnMoto);
+		
+		ButtonGroup radioGroup = new ButtonGroup();
+		radioGroup.add(rdbtnCar);
+		radioGroup.add(rdbtnMoto);
+		
+		
+		
+		JPanel tablePanel2 = new JPanel();
+		tablePanel2.setBackground(SystemColor.activeCaption);
+		statisticalMenu.add(tablePanel2);
+		tablePanel2.setLayout( new BorderLayout());
+		Border border2 = BorderFactory.createLineBorder(Color.BLACK);
+		TitledBorder titleBorder2 = BorderFactory.createTitledBorder(border2, " View Table ");
+		tablePanel2.setBorder(titleBorder2);
+		
+		
+		JScrollPane tableResult2 = new JScrollPane();
+		tablePanel2.add(tableResult2);
+		
+		table2 = new JTable();
+		table2.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Owner Name", "Identity Card", "Vehicle Type", "License Plate", "Brand", "Chassis Number", "Engine Number","Registration Date"
+			}
+		));
+		tableResult2.setViewportView(table2);
+		
+		
+		
+		
 		
 		
 		// -----------Add Icon------------
+		
+			// icon tab1
 		ImageIcon titleIcon = new ImageIcon("VehicleIcon.png");
 		lbTitle.setIcon(titleIcon);
 		ImageIcon insertIcon = new ImageIcon("InsertIcon.png");
@@ -356,14 +495,30 @@ public class VehicleGUIad {
 		btnSearch.setIcon(searchIcon);
 		ImageIcon signOutIcon = new ImageIcon("SignOutIcon.png");
 		btnSignOut.setIcon(signOutIcon);
-		
+			
+			// icon tab2
+		ImageIcon carIcon = new ImageIcon("CarIcon.png");
+		lbNumCar.setIcon(carIcon);
+		lbNumCar.setHorizontalTextPosition(JLabel.LEFT);
+		ImageIcon motobikeIcon = new ImageIcon("MotobikeIcon.png");
+		lbNumMoto.setIcon(motobikeIcon);
+		lbNumMoto.setHorizontalTextPosition(JLabel.LEFT);
+		ImageIcon statisticalIcon = new ImageIcon("StatisticalIcon.png");
+		lbNumAll.setIcon(statisticalIcon);
+		lbNumAll.setHorizontalTextPosition(JLabel.LEFT);
 		// --------------------
 		
 		
 		
+		// Name tab
+		tabbedPane.setTitleAt(0,"Main Menu");
+		tabbedPane.setTitleAt(1,"Statistical Menu");
+		//-------
 		
 		
 		
+		
+		frame.setUndecorated(false);
 		frame.pack();
 		frame.setLocation(100,30);
 		frame.setSize(1200,600);
@@ -418,6 +573,48 @@ public class VehicleGUIad {
 			dataRow[7] = v.getDate();
 			model.addRow(dataRow);
 		}
+	}
+	
+	public void fillDataMotobike() {
+		DefaultTableModel model2 = (DefaultTableModel) table2.getModel();
+		model2.setRowCount(0);
+		
+		for(Vehicle v : c.getAllMotobike()) {
+			Object dataRow[] = new Object[8];
+			dataRow[0] = v.getOwnerName();
+			dataRow[1] = v.getIdentityCard();
+			dataRow[2] = v.getType();
+			dataRow[3] = v.getLicensePlate();
+			dataRow[4] = v.getBrand();
+			dataRow[5] = v.getChassisNumber();
+			dataRow[6] = v.getEngineNumber();
+			dataRow[7] = v.getDate();
+			model2.addRow(dataRow);
+		}
+	}
+	
+	public void fillDataCar() {
+		DefaultTableModel model2 = (DefaultTableModel) table2.getModel();
+		model2.setRowCount(0);
+		
+		for(Vehicle v : c.getAllCar()) {
+			Object dataRow[] = new Object[8];
+			dataRow[0] = v.getOwnerName();
+			dataRow[1] = v.getIdentityCard();
+			dataRow[2] = v.getType();
+			dataRow[3] = v.getLicensePlate();
+			dataRow[4] = v.getBrand();
+			dataRow[5] = v.getChassisNumber();
+			dataRow[6] = v.getEngineNumber();
+			dataRow[7] = v.getDate();
+			model2.addRow(dataRow);
+		}
+	}
+	
+	public void refreshStatistical(){
+		lbNumAll.setText(String.valueOf(c.countAll()));
+		lbNumCar.setText(String.valueOf(c.countCar()));
+		lbNumMoto.setText(String.valueOf(c.countMoto()));
 	}
 	
 	public void searchByOwnerName() {
