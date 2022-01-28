@@ -119,17 +119,6 @@ public class VehicleGUIus {
 		TitledBorder titleBorder = BorderFactory.createTitledBorder(border, " View Table ");
 		tablePanel.setBorder(titleBorder);
 		
-		JButton btnSignOut = new JButton("Sign Out");
-		panelFunction.add(btnSignOut);
-		btnSignOut.setHorizontalAlignment(SwingConstants.LEADING);
-		btnSignOut.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Sign out successfully");
-				frame.dispose();
-				LoginGUI log = new LoginGUI();
-			}
-		});
-		
 		JScrollPane tableResult = new JScrollPane();
 
 		tablePanel.add(tableResult);
@@ -296,6 +285,17 @@ public class VehicleGUIus {
 		ImageIcon signOutIcon = new ImageIcon("SignOutIcon.png");
 		ImageIcon searchIcon = new ImageIcon("SearchIcon.png");
 		btnSearch.setIcon(searchIcon);
+		
+		JButton btnSignOut = new JButton("Sign Out");
+		panelFunction.add(btnSignOut);
+		btnSignOut.setHorizontalAlignment(SwingConstants.LEADING);
+		btnSignOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Sign out successfully");
+				frame.dispose();
+				LoginGUI log = new LoginGUI();
+			}
+		});
 		btnSignOut.setIcon(signOutIcon);
 			
 			// icon tab2
