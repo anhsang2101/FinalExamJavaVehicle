@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.management.relation.Role;
 
+import Model.Owner;
 import Model.Vehicle;
 
 public class ConnectDB {
@@ -33,6 +34,12 @@ public class ConnectDB {
 		
 		return null;
 	}
+	
+	
+	
+	// tab vehicle
+	
+	
 	
 	public int Checklp(String lp) {
 		
@@ -136,7 +143,7 @@ public class ConnectDB {
 		Connection conn = null;
 		PreparedStatement sttm = null;
 		try {
-			String sql = "Delete Vehicle where [License Plate] = ?";
+			String sql = "Delete From Vehicle where [License Plate] = ?";
 			conn = getDBConnect();
 			sttm = conn.prepareStatement(sql);
 			sttm.setString(1, lp);
@@ -488,6 +495,299 @@ public class ConnectDB {
 			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle";
 			conn = getDBConnect();
 			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+			
+			while(rs.next()) {
+				count++;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				rs.close();
+				//SQL_D.getCon().close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+		return count;
+	}
+	
+	
+	// tab owner
+	
+	public int CheckID(int id) {
+		
+		Connection conn = null;
+		PreparedStatement sttm = null;
+		ResultSet rs = null;
+		try {
+			String sql = "Select * From Owner Where [Identity Card] = ? ";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setInt(1, id);
+			rs = sttm.executeQuery();
+			if(rs.next())
+				return 1;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+				rs.close();
+				
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return -1;
+
+		
+	}
+	
+	public int Insert2(Owner o) {
+		Connection conn = null;
+		PreparedStatement sttm = null;
+		try {
+			String sql = "Insert into Owner ([Owner Name], [Identity Card], [Day Of Birth], [Gender], [Address]) values(?,?,?,?,?)";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setString(1, o.getName());
+			sttm.setInt(2, o.getIdentityCard());
+			sttm.setDate(3, o.getDayOfBirth());
+			sttm.setString(4, o.getGender());
+			sttm.setString(5, o.getAddress());
+			if(sttm.executeUpdate() > 0) {
+				System.out.println("Insert thanh cong");
+				return 1;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.toString());
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return -1;
+	}
+	
+	public int Update2(Owner o) {
+		Connection conn = null;
+		PreparedStatement sttm = null;
+		try {
+			String sql = "Update Owner set [Owner Name] = ?, [Day Of Birth] = ?, [Gender] = ?, [Address] = ? where  [Identity Card] = ?";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setString(1, o.getName());
+			sttm.setDate(2, o.getDayOfBirth());
+			sttm.setString(3, o.getGender());
+			sttm.setString(4, o.getAddress());
+			sttm.setInt(5, o.getIdentityCard());
+			if(sttm.executeUpdate() > 0) {
+				System.out.println("Update thanh cong");
+				return 1;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.toString());
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return -1;
+	}
+	
+	public int Delete2(int id) {
+		Connection conn = null;
+		PreparedStatement sttm = null;
+		try {
+			String sql = "Delete From Owner where [Identity Card] = ?";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setInt(1, id);
+			if(sttm.executeUpdate() > 0) {
+				System.out.println("Delete thanh cong");
+				return 1;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return -1;
+	}
+	
+	
+	public List<Owner> getAllOwner(){
+		List<Owner> list = new ArrayList<>();
+		Connection conn = null;
+		Statement sttm = null;
+		ResultSet rs = null;
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Day Of Birth], [Gender], [Address] From Owner";
+			conn = getDBConnect();
+			sttm = conn.createStatement();
+			rs = sttm.executeQuery(sql);
+			while(rs.next()) {
+				Owner o = new Owner();
+				o.setName(rs.getString(1));
+				o.setIdentityCard(rs.getInt(2));
+				o.setDayOfBirth(rs.getDate(3));
+				o.setGender(rs.getString(4));
+				o.setAddress(rs.getString(5));
+				list.add(o);
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+				rs.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return list;
+	}
+	
+	public Owner getOwnerByID(int id) {
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+		String sql = "Select [Owner Name], [Identity Card], [Day Of Birth], [Gender], [Address] From Owner where [Identity Card] = ?";
+		Owner o = new Owner();
+		try {
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setInt(1, id);
+			rs = sttm.executeQuery();
+			while(rs.next()) {
+				o.setName(rs.getString(1));
+				o.setIdentityCard(rs.getInt(2));
+				o.setDayOfBirth(rs.getDate(3));
+				o.setGender(rs.getString(4));
+				o.setAddress(rs.getString(5));
+				return o;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.toString());
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+				rs.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return null;
+	}
+	
+	public List<Owner> getOwnerByOwnerName(String name){
+		List<Owner> list = new ArrayList<>();
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Day Of Birth], [Gender], [Address] From Owner where [Owner Name] like '%"+name+"%'";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+			
+			while(rs.next()) {
+				Owner o = new Owner();
+				o.setName(rs.getString(1));
+				o.setIdentityCard(rs.getInt(2));
+				o.setDayOfBirth(rs.getDate(3));
+				o.setGender(rs.getString(4));
+				o.setAddress(rs.getString(5));
+				list.add(o);
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				rs.close();
+				//SQL_D.getCon().close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+		return list;
+	}
+	
+	public List<Owner> getOwnersByID(String id){
+		List<Owner> list = new ArrayList<>();
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Day Of Birth], [Gender], [Address] From Owner where [Identity Card] like '%"+id+"%'";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			rs = sttm.executeQuery();
+			
+			while(rs.next()) {
+				Owner o = new Owner();
+				o.setName(rs.getString(1));
+				o.setIdentityCard(rs.getInt(2));
+				o.setDayOfBirth(rs.getDate(3));
+				o.setGender(rs.getString(4));
+				o.setAddress(rs.getString(5));
+				list.add(o);
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				rs.close();
+				//SQL_D.getCon().close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+		return list;
+	}
+	
+	public int getNumVehicle(int id) {
+		int count=0;
+		Connection conn = null;
+		ResultSet rs = null;
+		PreparedStatement sttm = null;
+		try {
+			String sql = "Select [Owner Name], [Identity Card], [Vehicle Type], [License Plate], [Brand], [Chassis Number], [Engine Number], [Registration Date] From Vehicle where [Identity Card] = ?";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setInt(1, id);
 			rs = sttm.executeQuery();
 			
 			while(rs.next()) {
