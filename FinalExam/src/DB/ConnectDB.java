@@ -515,6 +515,35 @@ public class ConnectDB {
 		return count;
 	}
 	
+	public boolean checkUpdateVehicle(String lp) {
+		Connection conn = null;
+		PreparedStatement sttm = null;
+		ResultSet rs = null;
+		try {
+			String sql = "Select * From Vehicle Where [License Plate] = ? ";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setString(1, lp);
+			rs = sttm.executeQuery();
+			if(rs.next())
+				return true;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+				rs.close();
+				
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return false;
+
+	}
+	
 	
 	// tab owner
 	
@@ -777,6 +806,36 @@ public class ConnectDB {
 		}
 		return list;
 	}
+	
+	public boolean checkUpdateOwner(int id) {
+		Connection conn = null;
+		PreparedStatement sttm = null;
+		ResultSet rs = null;
+		try {
+			String sql = "Select * From Owner Where [Identity Card] = ? ";
+			conn = getDBConnect();
+			sttm = conn.prepareStatement(sql);
+			sttm.setInt(1, id);
+			rs = sttm.executeQuery();
+			if(rs.next())
+				return true;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			try {
+				sttm.close();
+				conn.close();
+				rs.close();
+				
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return false;
+
+	}
+	
 	
 	public int getNumVehicle(int id) {
 		int count=0;

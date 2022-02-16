@@ -82,7 +82,7 @@ public class VehicleGUIus {
 		panelTitle.setBackground(SystemColor.activeCaption);
 		menuPanel.add(panelTitle);
 		
-		JLabel lbTitle = new JLabel("Vehicle Management");
+		JLabel lbTitle = new JLabel("Vehicle Information");
 		panelTitle.add(lbTitle);
 		lbTitle.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		lbTitle.setForeground(Color.RED);
@@ -441,7 +441,7 @@ public class VehicleGUIus {
 		frame.setUndecorated(false);
 		frame.pack();
 		frame.setLocation(100,30);
-		frame.setSize(1200,600);
+		frame.setSize(1000,600);
 		frame.setVisible(true);
 		
 	}

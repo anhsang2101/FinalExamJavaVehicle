@@ -221,10 +221,17 @@ public class VehicleGUIad {
 			public void actionPerformed(ActionEvent e) {
 				if(tfLicensePlate.getText().isEmpty()==false) {
 					Vehicle v = putToModel();
-					if(c.Update(v)>0) {
-						JOptionPane.showMessageDialog(null, "Update successfully");
-						fillDataTable();
-						fillDataTable2();
+					if(c.checkUpdateVehicle(v.getLicensePlate())==true) {
+						if(c.Update(v)>0) {
+							JOptionPane.showMessageDialog(null, "Update successfully");
+							fillDataTable();
+							fillDataTable2();
+						}
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "You mustn't change the License Plate, \n"
+								+ "You should insert a new one");
+						newTextField();
 					}
 					
 				}
@@ -238,7 +245,7 @@ public class VehicleGUIad {
 		JButton btnDelete = new JButton("Delete");
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(tfLicensePlate.getText().isEmpty()==false) {
+				if(validateForm()) {
 					Vehicle v = putToModel();
 					if(c.Delete(v.getLicensePlate())>0) {
 						JOptionPane.showMessageDialog(null, "Delete successfully");
@@ -471,9 +478,16 @@ public class VehicleGUIad {
 			public void actionPerformed(ActionEvent e) {
 				if(tfIdentityCard2.getText().isEmpty()==false) {
 					Owner o = putToModel2();
-					if(c.Update2(o)>0) {
-						JOptionPane.showMessageDialog(null, "Update successfully");
-						fillDataTable2();
+					if(c.checkUpdateOwner(o.getIdentityCard())==true) {
+						if(c.Update2(o)>0) {
+							JOptionPane.showMessageDialog(null, "Update successfully");
+							fillDataTable2();
+						}
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "You mustn't change the ID, \n"
+								+ " You should insert a new one");
+						newTextField2();
 					}
 					
 				}
